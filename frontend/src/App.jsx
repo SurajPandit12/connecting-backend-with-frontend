@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
   const[form, setForm]=useState({})
-
+  const[user, setUser]=useState([])
 let handleSubmit= (e) =>
 
  {
@@ -16,12 +16,34 @@ let handleSubmit= (e) =>
 let handleForm= async (e)=>{
   e.preventDefault();
 const response= await fetch('http://localhost:8080/demo', {
-  method: 'GET'
+  method: 'POST',
+  body:JSON.stringify(form),
+  headers:{
+    'Content-Type':'application/json'
+  },
 })
 
-const result=await response.text()
+const result=await response.json()
   console.log(result)
 }
+
+
+
+let getUser= async ()=>{
+
+const response= await fetch('http://localhost:8080/demo', {
+  method: 'GET',
+ 
+
+})
+
+const result=await response.json()
+  setUser(result)
+}
+
+useEffect(()=>{
+  getUser();
+},[])
 
   return (
     <div>
@@ -37,6 +59,25 @@ const result=await response.text()
         
         <input type="submit" value="Connect" />
       </form>
+      <div>
+        <h2>User Data</h2>
+        <table border="1">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Password</th>
+            </tr>
+          </thead>
+          <tbody>
+            {user.map((e, index) => (
+              <tr key={index}>
+                <td>{e.username}</td>
+                <td>{e.password}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
